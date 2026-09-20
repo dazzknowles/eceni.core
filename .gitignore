@@ -2,6 +2,7 @@ bin/
 obj/
 artifacts/
 .vs/
+.idea/
 *.suo
 *.user
 *.pubxml
