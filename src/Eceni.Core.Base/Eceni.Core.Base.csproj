@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<RootNamespace>Eceni.Core.Base</RootNamespace>
+		<Configurations>Debug;Release</Configurations>
+		<IsPackable>true</IsPackable>
+		<PackageId>Eceni.Core.Base</PackageId>
+		<Description>Common data-access foundation shared across Eceni projects</Description>
+		<Authors>dazzknowles</Authors>
+		<RepositoryUrl>https://github.com/dazzknowles/eceni.core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+	</ItemGroup>
+
+</Project>

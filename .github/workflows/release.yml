@@ -1,0 +1,75 @@
+name: NuGet Push
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+      - "v*.*.*-*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Verify commit exists in default branch
+        run: |
+          git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+          DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
+          git branch --remote --contains | grep "origin/${DEFAULT_BRANCH}"
+
+      - name: Set VERSION from tag
+        shell: bash
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/v}"
+          if [[ "$VERSION" == *-* ]]; then
+            SHORT_SHA="${GITHUB_SHA::7}"
+            VERSION="${VERSION}.${SHORT_SHA}"
+          fi
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "Using VERSION=${VERSION}"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release /p:Version=${{ env.VERSION }} --no-restore
+
+      - name: Pack all packable projects
+        run: dotnet pack --configuration Release /p:Version=${{ env.VERSION }} --no-build --output ./artifacts
+
+      - name: Push all NuGet packages to GitHub Packages
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shopt -s nullglob
+          packages=(./artifacts/*.nupkg)
+
+          if [ ${#packages[@]} -eq 0 ]; then
+            echo "No packages found to push."
+            exit 1
+          fi
+
+          for pkg in "${packages[@]}"; do
+            if [[ "$pkg" == *.snupkg ]]; then
+              continue
+            fi
+            echo "Pushing $pkg"
+            dotnet nuget push "$pkg" \
+              --source "https://nuget.pkg.github.com/dazzknowles/index.json" \
+              --api-key "$GH_TOKEN" \
+              --skip-duplicate
+          done

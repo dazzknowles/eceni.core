@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<RootNamespace>Eceni.Core.Database.MySQL</RootNamespace>
+		<Configurations>Debug;Release</Configurations>
+		<IsPackable>true</IsPackable>
+		<PackageId>Eceni.Core.Database.MySQL</PackageId>
+		<Description>Eceni's stored-procedure data-access layer for MySQL/MariaDB</Description>
+		<Authors>dazzknowles</Authors>
+		<RepositoryUrl>https://github.com/dazzknowles/eceni.core</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MySqlConnector" Version="2.5.0" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Eceni.Core.Base\Eceni.Core.Base.csproj" />
+	</ItemGroup>
+
+</Project>
